@@ -10,142 +10,103 @@ export default function CrossoverDemo() {
   const [taxaMut, setTaxaMut] = useState(0.05)
 
   function executar() {
-    const { filho1, filho2, corte } = crossover(pai, mae, 1.0) // força crossover
+    const { filho1, filho2, corte } = crossover(pai, mae, 1.0)
     const m1 = mutacao(filho1, taxaMut)
     const m2 = mutacao(filho2, taxaMut)
     setResultado({ filho1: m1.cromossomo, filho2: m2.cromossomo, corte, mut1: m1.posicoesMutadas, mut2: m2.posicoesMutadas })
   }
 
-  function novosPais() {
-    setPai(criarCromossomo())
-    setMae(criarCromossomo())
-    setResultado(null)
-  }
+  const btnBase = { border: 'none', borderRadius: 9, padding: '10px 20px', fontSize: 13, fontWeight: 500 }
 
   return (
-    <section style={{ padding: '5rem 1.5rem', maxWidth: 900, margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <span className="tag tag-amber" style={{ marginBottom: '1rem', display: 'inline-block' }}>demonstração</span>
-        <h2 style={{ fontFamily: 'Syne', fontSize: 'clamp(1.6rem,4vw,2.4rem)', fontWeight: 700 }}>
-          Crossover + Mutação na prática
-        </h2>
-        <p style={{ color: 'rgba(255,255,255,0.45)', marginTop: '0.75rem' }}>
-          Veja exatamente como dois cromossomos se combinam para gerar filhos
-        </p>
+    <section className="section" id="crossover">
+      <div className="section-label">demonstração</div>
+      <h2 className="section-title">Crossover + Mutação</h2>
+      <p className="section-sub" style={{ marginBottom: '1.75rem' }}>
+        Escolha pais e veja exatamente como os filhos são gerados.
+      </p>
+
+      {/* pais */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+        {[
+          { label: 'PAI', bits: pai, cor: '#60a5fa', corDim: 'rgba(96,165,250,0.06)', onNew: () => { setPai(criarCromossomo()); setResultado(null) } },
+          { label: 'MÃE', bits: mae, cor: '#a78bfa', corDim: 'rgba(167,139,250,0.06)', onNew: () => { setMae(criarCromossomo()); setResultado(null) } },
+        ].map(({ label, bits, cor, corDim, onNew }) => (
+          <div key={label} style={{ background: corDim, border: `1px solid ${cor}20`, borderRadius: 12, padding: '1.1rem' }}>
+            <div style={{ fontSize: 10, color: cor, fontFamily: 'IBM Plex Mono', marginBottom: 10, opacity: 0.7 }}>
+              {label} — fitness: <span style={{ opacity: 1 }}>{fitness(bits)}/{TAM}</span>
+            </div>
+            <Cromossomo bits={bits} corte={resultado?.corte} />
+            <button onClick={onNew} style={{
+              ...btnBase,
+              marginTop: 12, background: `${cor}15`,
+              color: cor, border: `1px solid ${cor}25`, padding: '6px 14px', fontSize: 12,
+            }}>↺ Novo</button>
+          </div>
+        ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
-        {/* PAI */}
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '1.25rem' }}>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', fontFamily: 'IBM Plex Mono', marginBottom: 10 }}>
-            PAI — fitness: <span style={{ color: '#60a5fa' }}>{fitness(pai)}/{TAM}</span>
-          </div>
-          <Cromossomo bits={pai} corte={resultado?.corte} />
-          <div style={{ marginTop: 10, display: 'flex', gap: 6 }}>
-            <button onClick={() => { setPai(criarCromossomo()); setResultado(null) }} style={{
-              background: 'rgba(96,165,250,0.1)', color: '#60a5fa',
-              border: '1px solid rgba(96,165,250,0.2)', borderRadius: 7,
-              padding: '6px 14px', fontSize: 12,
-            }}>↺ Novo pai</button>
-          </div>
-        </div>
-
-        {/* MÃE */}
-        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '1.25rem' }}>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', fontFamily: 'IBM Plex Mono', marginBottom: 10 }}>
-            MÃE — fitness: <span style={{ color: '#a78bfa' }}>{fitness(mae)}/{TAM}</span>
-          </div>
-          <Cromossomo bits={mae} corte={resultado?.corte} />
-          <div style={{ marginTop: 10 }}>
-            <button onClick={() => { setMae(criarCromossomo()); setResultado(null) }} style={{
-              background: 'rgba(167,139,250,0.1)', color: '#a78bfa',
-              border: '1px solid rgba(167,139,250,0.2)', borderRadius: 7,
-              padding: '6px 14px', fontSize: 12,
-            }}>↺ Nova mãe</button>
-          </div>
-        </div>
-      </div>
-
-      {/* controle mutação + botão */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+      {/* controles */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: '1.5rem', alignItems: 'center' }}>
         <button onClick={executar} style={{
-          background: '#f59e0b', color: '#000',
-          border: 'none', borderRadius: 9,
-          padding: '11px 28px', fontSize: 14, fontWeight: 700, fontFamily: 'Syne',
-        }}>
-          🔀 Executar crossover + mutação
-        </button>
-        <button onClick={novosPais} style={{
-          background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.5)',
-          border: '1px solid rgba(255,255,255,0.08)', borderRadius: 9,
-          padding: '11px 18px', fontSize: 13,
-        }}>↺ Novos pais aleatórios</button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-          Taxa de mutação:
-          <input type="range" min={0} max={50} value={Math.round(taxaMut*100)}
-            onChange={e => setTaxaMut(e.target.value/100)} style={{ width: 80 }} />
-          <span style={{ color: '#f87171', fontFamily: 'IBM Plex Mono', minWidth: 32 }}>{Math.round(taxaMut*100)}%</span>
+          ...btnBase, background: '#fbbf24', color: '#000', fontFamily: 'Syne, sans-serif', fontWeight: 700,
+        }}>🔀 Executar crossover</button>
+        <button onClick={() => { setPai(criarCromossomo()); setMae(criarCromossomo()); setResultado(null) }} style={{
+          ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.07)',
+        }}>↺ Novos pais</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>
+          Mutação:
+          <input type="range" min={0} max={50} value={Math.round(taxaMut*100)} onChange={e => setTaxaMut(e.target.value/100)} style={{ width: 70 }} />
+          <span style={{ color: '#f87171', fontFamily: 'IBM Plex Mono', minWidth: 30 }}>{Math.round(taxaMut*100)}%</span>
         </div>
       </div>
 
       {/* resultado */}
       {resultado && (
-        <div style={{ animation: 'fadeIn 0.25s ease' }}>
-          <style>{`@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }`}</style>
-
+        <div style={{ animation: 'fadeUp 0.25s ease' }}>
+          <style>{`@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}`}</style>
           {resultado.corte && (
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: '1rem', fontFamily: 'IBM Plex Mono' }}>
-              Ponto de corte sorteado: <span style={{ color: '#a78bfa' }}>posição {resultado.corte}</span>
-              {resultado.mut1.length > 0 && <span style={{ marginLeft: 16 }}>Mutações filho 1: <span style={{ color: '#f87171' }}>posições {resultado.mut1.join(', ')}</span></span>}
-              {resultado.mut2.length > 0 && <span style={{ marginLeft: 8 }}>filho 2: <span style={{ color: '#f87171' }}>posições {resultado.mut2.join(', ')}</span></span>}
-              {resultado.mut1.length === 0 && resultado.mut2.length === 0 && <span style={{ marginLeft: 16, color: 'rgba(255,255,255,0.25)' }}>nenhuma mutação nessa rodada</span>}
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: '1rem', fontFamily: 'IBM Plex Mono', lineHeight: 1.8 }}>
+              Ponto de corte: <span style={{ color: '#a78bfa' }}>posição {resultado.corte}</span>
+              {resultado.mut1.length > 0 && <> · Mutações F1: <span style={{ color: '#f87171' }}>{resultado.mut1.join(', ')}</span></>}
+              {resultado.mut2.length > 0 && <> · F2: <span style={{ color: '#f87171' }}>{resultado.mut2.join(', ')}</span></>}
+              {resultado.mut1.length === 0 && resultado.mut2.length === 0 && <span style={{ color: 'rgba(255,255,255,0.2)' }}> · sem mutações nessa rodada</span>}
             </div>
           )}
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 12, padding: '1.1rem' }}>
-              <div style={{ fontSize: 11, color: 'rgba(34,197,94,0.6)', fontFamily: 'IBM Plex Mono', marginBottom: 10 }}>
-                FILHO 1 — fitness: <span style={{ color: '#22c55e' }}>{fitness(resultado.filho1)}/{TAM}</span>
-                {fitness(resultado.filho1) > Math.max(fitness(pai), fitness(mae)) && (
-                  <span style={{ marginLeft: 8, color: '#22c55e' }}>↑ melhor que os pais!</span>
-                )}
-              </div>
-              <Cromossomo bits={resultado.filho1} highlight={resultado.mut1} />
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 8 }}>
-                bits amarelos = sofreram mutação
-              </div>
-            </div>
-
-            <div style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 12, padding: '1.1rem' }}>
-              <div style={{ fontSize: 11, color: 'rgba(34,197,94,0.6)', fontFamily: 'IBM Plex Mono', marginBottom: 10 }}>
-                FILHO 2 — fitness: <span style={{ color: '#22c55e' }}>{fitness(resultado.filho2)}/{TAM}</span>
-                {fitness(resultado.filho2) > Math.max(fitness(pai), fitness(mae)) && (
-                  <span style={{ marginLeft: 8, color: '#22c55e' }}>↑ melhor que os pais!</span>
-                )}
-              </div>
-              <Cromossomo bits={resultado.filho2} highlight={resultado.mut2} />
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 8 }}>
-                bits amarelos = sofreram mutação
-              </div>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+            {[
+              { label: 'FILHO 1', bits: resultado.filho1, mut: resultado.mut1 },
+              { label: 'FILHO 2', bits: resultado.filho2, mut: resultado.mut2 },
+            ].map(({ label, bits, mut }) => {
+              const melhorQuePais = fitness(bits) > Math.max(fitness(pai), fitness(mae))
+              return (
+                <div key={label} style={{ background: 'rgba(52,211,153,0.05)', border: '1px solid rgba(52,211,153,0.15)', borderRadius: 12, padding: '1.1rem' }}>
+                  <div style={{ fontSize: 10, color: 'rgba(52,211,153,0.7)', fontFamily: 'IBM Plex Mono', marginBottom: 10 }}>
+                    {label} — fitness: <span style={{ color: '#34d399' }}>{fitness(bits)}/{TAM}</span>
+                    {melhorQuePais && <span style={{ color: '#34d399', marginLeft: 8 }}>↑ melhor que os pais!</span>}
+                  </div>
+                  <Cromossomo bits={bits} highlight={mut} />
+                  {mut.length > 0 && (
+                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 8 }}>bits laranja = sofreram mutação</div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
 
-      {/* código lado a lado */}
-      <div style={{ marginTop: '2.5rem' }}>
-        <CodeBlock title="crossover + mutacao — ag_zamberlan.py" code={`def crossover(pai, mae):
+      <CodeBlock title="crossover + mutacao — ag.py" code={`def crossover(pai, mae):
     corte = random.randint(1, TAM_CROMOSSOMO - 1)
     filho1 = pai[:corte] + mae[corte:]
     filho2 = mae[:corte] + pai[corte:]
     return filho1, filho2
 
-def mutacao(cromossomo):
+def mutacao(cromossomo, taxa=0.05):
     return [
-        1 - gene if random.random() < TAXA_MUTACAO else gene
+        1 - gene if random.random() < taxa else gene
         for gene in cromossomo
     ]`} />
-      </div>
     </section>
   )
 }

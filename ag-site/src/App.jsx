@@ -3,62 +3,53 @@ import Hero from './components/Hero.jsx'
 import Conceitos from './components/Conceitos.jsx'
 import Simulador from './components/Simulador.jsx'
 import CrossoverDemo from './components/CrossoverDemo.jsx'
+import Mochila from './components/Mochila.jsx'
 import Footer from './components/Footer.jsx'
+
+const navLinks = [
+  { label: 'Conceitos', href: '#conceitos' },
+  { label: 'Simulador', href: '#simulador' },
+  { label: 'Crossover', href: '#crossover' },
+  { label: 'Mochila', href: '#mochila' },
+]
 
 export default function App() {
   const conceitosRef = useRef(null)
 
-  function scrollParaConceitos() {
-    conceitosRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
     <div>
-      {/* navbar fixa */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: 'rgba(10,10,15,0.85)', backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        padding: '0 1.5rem', height: 52,
+        background: 'rgba(8,8,16,0.88)', backdropFilter: 'blur(14px)',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        padding: '0 1.25rem', height: 50,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <span style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 15, letterSpacing: '-0.01em' }}>
-          AG<span style={{ color: '#22c55e' }}>.</span>learn
+        <span style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 14, letterSpacing: '-0.01em' }}>
+          AG<span style={{ color: '#7c6fff' }}>.</span>learn
         </span>
-        <div style={{ display: 'flex', gap: 4 }}>
-          {['Conceitos', 'Simulador', 'Crossover'].map(s => (
-            <a key={s} href={`#${s.toLowerCase()}`} style={{
-              fontSize: 13, color: 'rgba(255,255,255,0.45)',
-              textDecoration: 'none', padding: '6px 12px', borderRadius: 7,
-              transition: 'color 0.15s, background 0.15s',
+        <div style={{ display: 'flex', gap: 2 }}>
+          {navLinks.map(l => (
+            <a key={l.href} href={l.href} style={{
+              fontSize: 12, color: 'rgba(255,255,255,0.4)',
+              textDecoration: 'none', padding: '5px 10px', borderRadius: 6,
             }}
               onMouseEnter={e => { e.target.style.color='#fff'; e.target.style.background='rgba(255,255,255,0.05)' }}
-              onMouseLeave={e => { e.target.style.color='rgba(255,255,255,0.45)'; e.target.style.background='transparent' }}
-            >{s}</a>
+              onMouseLeave={e => { e.target.style.color='rgba(255,255,255,0.4)'; e.target.style.background='transparent' }}
+            >{l.label}</a>
           ))}
         </div>
       </nav>
 
-      <div style={{ paddingTop: 52 }}>
-        <Hero onStart={scrollParaConceitos} />
-
-        <div ref={conceitosRef} id="conceitos">
-          <Conceitos />
-        </div>
-
-        {/* divisor */}
-        <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent)', margin: '0 1.5rem' }} />
-
-        <div id="simulador">
-          <Simulador />
-        </div>
-
-        <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent)', margin: '0 1.5rem' }} />
-
-        <div id="crossover">
-          <CrossoverDemo />
-        </div>
-
+      <div style={{ paddingTop: 50 }}>
+        <Hero onStart={() => conceitosRef.current?.scrollIntoView({ behavior: 'smooth' })} />
+        <div ref={conceitosRef}><Conceitos /></div>
+        <div className="divider" />
+        <Simulador />
+        <div className="divider" />
+        <CrossoverDemo />
+        <div className="divider" />
+        <Mochila />
         <Footer />
       </div>
     </div>
