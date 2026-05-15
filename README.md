@@ -1,6 +1,6 @@
 # AG.learn — Algoritmos Genéticos de forma interativa
 
-![Preview do site](<img width="1280" height="698" alt="Image" src="https://github.com/user-attachments/assets/1efd5473-191f-476e-b86a-0e7f15963095" />)
+![Preview do site](https://github.com/user-attachments/assets/1efd5473-191f-476e-b86a-0e7f15963095)
 
 
 Site didático sobre Algoritmos Genéticos com simulações interativas, feito como projeto da disciplina de Técnicas de IA (Sistemas de Informação).
